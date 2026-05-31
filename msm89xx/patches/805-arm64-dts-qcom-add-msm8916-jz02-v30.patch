@@ -1,0 +1,111 @@
+From Vasilii Olekhov <olekhov@gmail.com>
+Date: Sun, 25 May 2026 16:45:00 +0300
+Subject: [PATCH] arm64: dts: qcom: add Prolextech JZ02-V30 modem stick
+
+This board is MSM8916-based and close to the UFI family, but the stock
+firmware does not match the upstream msm8916-thwc-ufi001c pinout.
+
+The downstream Android DTB extracted from the shipped boot image exposes:
+
+- RGB LEDs on GPIO6/GPIO7/GPIO8
+- SIM control lines exported through the LED class on GPIO1/GPIO20/GPIO22/GPIO23
+- restart button on GPIO37
+
+These GPIOs were also validated from Android userspace:
+
+- red/green/blue work as expected
+- sim1_switch_gpio/sim2_switch_gpio/sim3_switch_gpio/sim_hotdet_gpio are present
+  under /sys/class/leds and are writable
+
+Keep the SIM mux wiring minimal for now: model the GPIOs that are known to
+exist and avoid enabling the upstream thwc-ufi001c sim_ctrl_default pinctrl,
+which appears to target a different board revision.
+---
+ arch/arm64/boot/dts/qcom/Makefile           |  1 +
+ arch/arm64/boot/dts/qcom/msm8916-jz02v30.dts | 61 +++++++++++++++++++
+ 2 files changed, 62 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/msm8916-jz02v30.dts
+
+--- a/arch/arm64/boot/dts/qcom/Makefile
++++ b/arch/arm64/boot/dts/qcom/Makefile
+@@ -37,5 +37,6 @@
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-gplus-fl8005a.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-huawei-g7.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-huawei-y635.dtb
++dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-jz02-v30.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-lg-c50.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-lg-m216.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-longcheer-l8150.dtb
+
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/msm8916-jz02-v30.dts
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Prolextech JZ02-V30 4G modem stick
++ *
++ */
++
++/dts-v1/;
++
++#include "msm8916-ufi.dtsi"
++
++/ {
++	model = "Prolextech JZ02-V30 4G Modem stick";
++	compatible = "prolextech,jz02-v30", "qcom,msm8916";
++};
++
++&{/leds} {
++	sim1_switch_gpio {
++		gpios = <&tlmm 22 GPIO_ACTIVE_HIGH>;
++		label = "sim1_switch_gpio";
++		default-state = "off";
++		retain-state-suspended;
++	};
++
++	sim2_switch_gpio {
++		gpios = <&tlmm 23 GPIO_ACTIVE_HIGH>;
++		label = "sim2_switch_gpio";
++		default-state = "off";
++		retain-state-suspended;
++	};
++
++	sim3_switch_gpio {
++		gpios = <&tlmm 1 GPIO_ACTIVE_HIGH>;
++		label = "sim3_switch_gpio";
++		default-state = "on";
++		retain-state-suspended;
++	};
++
++	sim_hotdet_gpio {
++		gpios = <&tlmm 20 GPIO_ACTIVE_HIGH>;
++		label = "sim_hotdet_gpio";
++		default-state = "off";
++		retain-state-suspended;
++	};
++};
++
++&button_restart {
++	gpios = <&tlmm 37 GPIO_ACTIVE_HIGH>;
++};
++
++&led_b {
++	gpios = <&tlmm 7 GPIO_ACTIVE_HIGH>;
++};
++
++&led_g {
++	gpios = <&tlmm 6 GPIO_ACTIVE_HIGH>;
++};
++
++&led_r {
++	gpios = <&tlmm 8 GPIO_ACTIVE_HIGH>;
++};
++
++&button_default {
++	pins = "gpio37";
++	bias-pull-down;
++};
++
++&gpio_leds_default {
++	pins = "gpio1", "gpio6", "gpio7", "gpio8", "gpio20", "gpio22", "gpio23";
++};
