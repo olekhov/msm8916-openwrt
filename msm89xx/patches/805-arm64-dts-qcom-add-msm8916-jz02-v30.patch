@@ -28,10 +28,10 @@ which appears to target a different board revision.
 
 --- a/arch/arm64/boot/dts/qcom/Makefile
 +++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -37,5 +37,6 @@
+@@ -31,6 +31,7 @@
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-asus-z00l.dtb
  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-gplus-fl8005a.dtb
  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-huawei-g7.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-huawei-y635.dtb
 +dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-jz02-v30.dtb
  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-lg-c50.dtb
  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-lg-m216.dtb

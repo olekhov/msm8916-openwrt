@@ -2,10 +2,11 @@ services:
   chown-fix:
     image: alpine:latest
     command: >
-      sh -c "chown -R 1000:1000 /home/builder/openwrt/dl /home/builder/openwrt/bin"
+      sh -c "chown -R 1000:1000 /home/builder/openwrt/dl /home/builder/openwrt/bin /home/builder/openwrt/build_dir"
     volumes:
       - ../bin:/home/builder/openwrt/bin
       - dl:/home/builder/openwrt/dl
+      - build_dir:/home/builder/openwrt/build_dir
     user: root
     restart: "no"
 
@@ -25,6 +26,7 @@ services:
       - ../msm89xx:/home/builder/openwrt/target/linux/msm89xx
       - ../bin:/home/builder/openwrt/bin
       - dl:/home/builder/openwrt/dl
+      - build_dir:/home/builder/openwrt/build_dir
     command: ["/bin/bash"]
     depends_on:
       chown-fix:
@@ -32,4 +34,4 @@ services:
 
 volumes:
   dl:
-#  build_dir:
+  build_dir:
